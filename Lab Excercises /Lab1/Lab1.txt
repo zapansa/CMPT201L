@@ -1,0 +1,14 @@
+
+Part 1 — A description of your computing background (languages you are familiar with).
+I did C# and some Java in high school. It was just using Visual Studio to create basic programs and web apps. It was back in 2016-2017. So, I am familiar with C# albeit rusty, as for Java, I hardly remember it and all I can recall is that C# and Java have similar syntax. 
+I did CMPUT174 in the University of Alberta so I didn’t take CMPT101 or CMPT103 in MacEwan. It was just intro into Python. The first compsci course I took here in MacEwan is CMPT200. I’m very familiar with Python as it’s the most recent language I’ve used. 
+
+Part 2 — The first line from a man page “Description” section for any command other than pwd.
+$ man cd
+Change  the current working directory to dirName, or to the home directory (as specified in the HOME environment variable) if dirName is  not given. 
+
+Part 3 — The values of the 26th and 27th bytes.
+ec06 4000 0000 0000 ec06 4000 0000 0000
+3c00 0000 0000 0000 3c00 0000 0000 0000
+
+
