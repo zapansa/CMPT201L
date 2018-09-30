@@ -1,0 +1,235 @@
+Student's Name: Patricia Zapansa
+Assignment #1 Milestone 1
+Lab Section: X02L, Fall 2018
+CMPUT 201, Fall 2018
+Lab Instructor's Name: Calin Anton
+
+- - - - - - - -
+
+Instructions: 
+Milestone 1 - Due on Friday September 28th at 11:00 PM. 
+Upload to eSubmit a text file named plan.txt which details your plan for working on the assignment. This includes dates, algorithms, and implementation ideas. 
+
+- - - - - - - -
+
+MILESTONE 1 - PLANS
+
+A bunch of random pseudo-code and actual code frankenstein’d to give me an idea of what I 
+could try to do. May or may not work. 
+
+—
+Exercise #1 Plan 
+Finish By: 09-28-18
+Program Name: selectline
+
+Algorithm, pseudo-code, implementation: 
+
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+	// Declare Varibables
+	// charInput, the character we are looking for in echoInput.
+	// echoInput, whatever the user inputs and\
+	   will be printed if charInput is in it.
+	char charInput[1], echoInput[100];
+	
+	// prompt for input
+	printf instruction to get user input
+	scanf read input &charInput, &echoInput
+
+	// the if/else to echo the echoInput or not
+	if (the letter charInput is in echoInput)
+		printf echoInput
+	else
+		do nothing
+	
+	return 0;
+}
+
+— 
+Exercise #2 Plan 
+Finish By: 10–05-18
+Program Name: printfamday
+
+Algorithm, pseudo-code, implementation: 
+
+#include <stdio.h>
+#include <string.h>
+
+int main(void){
+	// Declare variables
+	// inYear, the user prompted year.
+	int inYear, colYear, rowYear, days
+
+	// Prompt for a year
+	printf prompt for a year
+	scanf read input, inYear
+
+	// maybe I could use a loop here?
+	Print next 30 years in table.
+	
+}
+
+— 
+Exercise #3 Plan 
+Finish By: 09-29-18
+Program Name: anagram
+
+Algorithm, pseudo-code, implementation: 
+
+#include <stdio.h>
+#include <string.h>
+
+int check_anagrams(char[], char[]);
+
+int main(void) {
+	// Declare variables
+	// inYear, the user prompted year.
+	char firstString[50], secondString[50];
+
+	// prompt for 2 strings
+	printf enter 2 words
+	scanf read input &firstString, &secondString
+
+	// if statement print appropriate message if the\
+	   strings are anagrams
+	if (check_anagrams(firstString, secondString) == 1)
+		printf firstString secondString False
+	else
+		printf firstString secondString True
+
+	return 0;
+}
+
+/* function to check if two strings are anagrams, 
+   returns 1 if true, 0 otherwise */
+int check_anagrams(char fString[], char sString[]) {
+	// anagrams have same length, if statement to check
+	if (strlen(fString) != strlen(sString)) {
+		return 0;
+	}
+	
+	check how many times a character appears in fString
+
+	check how many times a character appears in sString
+	
+	// compare character counts of both strings
+	if the counts are not equal
+		return 0;
+	else
+		return 1;
+}
+
+— 
+Exercise #4 Plan 
+Finish By: 10–05-18
+Program Name: squeeze
+
+Algorithm, pseudo-code, implementation: 
+
+/* 
+Note#1:  a way to max at 9? Start again???
+Note#2: strings in c need to be null terminated, otherwise how is
+	it supposed to know where it ends?
+*/
+
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+	// Declare Variables
+	// inString is the user inputted string
+	char inString[50];
+	// counter used to count how many times character repeat
+	int counter[50] = {0}
+	// use in loop
+	int i = 0;
+	
+	// prompt user for string
+	// fscanf reads from stdin
+	fprintf stdout, “enter a string”
+	fscanf stdin, read input, &inString
+
+	// while loop through characters in string
+	while(inString[i] != ‘\0’) { 
+		// through letters a to z
+		if (inString[i] >= ‘a’ && inString[i] <= ‘z’)
+			// increase the count for that character
+			// * Note#1
+			counter[inString[i]-‘a’]++;
+		i++;
+	}
+
+	//print the results
+	//fprintf outputs in stdout
+	// * Note#2
+	for ( i = 0, i < 50; i++) {
+		if (count[i] != 0)
+			fprintf stout, “”, i+’a’, count[c];
+	}
+
+	return 0;
+}
+
+Exercise #5 Plan 
+Finish By : 10-05-18
+Program Name: primesdiff
+
+Algorithm, pseudo-code, implementation: 
+
+#include <stdio.h>
+#include <string.h>
+
+/* This gets the prime numbers, puts it in an array then\
+   gets the prime number pairs with inputted difference. */
+
+int main(void) { 
+	// Declare variables
+	// get better names
+	int n, d, i, counter, add=0, arr[100];
+
+	// get input
+	printf(“”)
+	scanf(“%d %d”, &n, &d)
+
+	// find numbers less than m
+	for(i=3; i<m; i++) {
+		counter = 0;
+		for(j=2; j<=i;j++) {
+			// prime number condition
+			if (i%j == 0)
+				counter++;
+		}
+		// in this case the number is a prime, add it to an array. 
+		if (counter == 0) {
+			arr[add] = i;
+			add++
+		}
+	}
+	// for loop iterates through the prime number array
+	for (i = 1; i < add; i++) {
+		// adding d, is the difference between the two primes
+		// if the prime numbers have the inputted difference
+		if (arr[i] == arr[i-1] + d) {
+			// print the array pairs
+			printf(“%d %d\n”, arr[i-1], arr[i]);
+		}
+	}
+	
+	return 0;
+}
+		
+		
+		
+		
+	
+	
+
+		
+	
+	
+
+
+
+
