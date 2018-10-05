@@ -34,6 +34,9 @@ int main(void)
    /* Split the string in the space. */
   anagramWord1 = strtok(anagramStr, " ");
   anagramWord2 = strtok(NULL, " ");
+
+      
+  printf("%d", check_anagrams(anagramWord1, anagramWord2));
       
   if ((check_anagrams(anagramWord1, anagramWord2)) != 0)
     printf("%s %sTrue\n", anagramWord1, anagramWord2);
