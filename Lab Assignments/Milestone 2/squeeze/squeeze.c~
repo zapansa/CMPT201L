@@ -1,0 +1,60 @@
+/*-------------------------------------------------------
+# Student's Name: Patricia Zapansa
+# Lab Assignment #1, Part (#1)
+# Lab Section: 201-X02L
+# Lab Instructor’s Name: Calin Anton
+# CMPUT 201
+# Instructor's Name: Calin Anton
+*------------------------------------------------------*/
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_LENGTH (9)
+
+int main(void)
+{
+  char inString[1024];
+  int letters[26] = {0};
+  int c = 0;
+  int counter; 
+
+  gets(inString);
+  
+  while(inString[c] != '\0')
+    {
+      if(inString[c] >= 'a' && inString[c] <= 'z')
+	{
+	  letters[inString[c]-'a']++;
+	}
+      c++; 
+    }
+
+  for( c=0; c<26; c++ )
+    {
+      if( letters[c] > MAX_LENGTH )
+	{
+	  counter = letters[c]; 
+	  while( counter >= MAX_LENGTH)
+	    {
+	      printf("%c%d", c+'a', MAX_LENGTH);
+	      counter -= MAX_LENGTH;
+	    } 
+	  if(counter != 0)
+	    {
+	      printf("%c%d", c+'a', counter);
+	    }
+	  counter = 0; 
+	}
+      else if( letters[c] != 0 && letters[c] != 1 )
+        {
+          printf("%c%d", c+'a', letters[c]);
+        }
+      else if( letters[c] == 1 )
+        {
+          printf("%c", c+'a');
+        }
+    }
+  printf("\n");
+
+  return 0; 
+}

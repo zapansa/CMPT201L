@@ -1,0 +1,57 @@
+/*-------------------------------------------------------
+# Student's Name: Patricia Zapansa
+# Lab Assignment #1, Part (#5)
+# Lab Section: 201-X02L
+# Lab Instructorœôòùs Name: Calin Anton
+# CMPUT 201
+# Instructor's Name: Calin Anton
+*------------------------------------------------------*/
+
+#include <stdio.h>
+#define NOT_PRIME (1)
+#define IS_PRIME (-1)
+
+/* Declare functions */
+int find_pairs(int n, int d);
+
+int main(void) 
+{
+  /* Declare variables */
+  int n, d;
+
+  /* Read input */
+  scanf("%d %d", &n, &d);
+
+  /* Call function to find primes */
+  find_pairs(n, d);
+  
+  return 0; 
+}
+
+int find_pairs(int n, int d)
+{
+  /* Declare Variables */
+  int i, j, num;
+  int add = 0; 
+  int numArray[1024];
+
+  /* Nested loop to find prime numbers. 
+     )
+    {
+      /* Checks for the prime pairs with difference in array */
+      if( numArray[i] == numArray[i+1] - d )
+	{
+	  /* Print the primes pairs* */
+	  printf("(%d %d)\n", numArray[i], numArray[i+1]);
+	}
+    }
+
+  printf("My Solution\n");
+
+  for ( i=0; i<add; i++)
+      for( j=0; j<add; j++)
+	if (numArray[i] == numArray[j] - d)
+	  printf("(%d %d)\n", numArray[i], numArray[j]);
+
+  return 0;
+}
