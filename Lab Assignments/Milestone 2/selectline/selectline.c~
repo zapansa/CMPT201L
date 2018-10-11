@@ -1,3 +1,4 @@
+
 /*-------------------------------------------------------
 # Student's Name: Patricia Zapansa
 # Lab Assignment #1, Part (#1)
@@ -7,46 +8,32 @@
 # Instructor's Name: Calin Anton
 *------------------------------------------------------*/
 
-/* NOTE UNFINISHED */
+/* NOTE UNFINISHED  ----- get from unassumed length*/
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#define IS_IN_FIFTEEN (1)
 
 int main(void) 
   {
   /* Variables */
-  int echoMax = 128;
-  int echoSize = 0;
-
-  char *echoInput = malloc(echoMax);
+  char *echoInput = malloc(1);
   char *toSearch, *toEcho, *isPresent;
+  int echoLen = strlen(toSearch);
+  int inFifteen, c, k, i = 0; 
 
-  /* Read string of unassumed length from input */
-  echoSize = echoMax;
-
-  if(echoInput != NULL)
+  /* Read string from unknown length */
+  /* Read until EOF or \n */
+  while((c = getchar()) != '\n' && c != EOF)
     {
-    int j = EOF;
-    int i = 0;
-
-    // getchar() gets a character from stdin.
-    while (( j = getchar() ) != '\n' && j != EOF)
-      {
-
-      // adding each char into echoInput
-      echoInput[i++]=(char)j;
-      if (i == echoSize)
-        { 
-	echoSize = i + echoMax;
-	echoInput = realloc(echoInput, echoMax);
-        }
-      }
-
-    // null terminator for echoInput
-    echoInput[i] = '\0';
+      echoInput[i++] = c;
+      echoInput = realloc(echoInput, i+1);
     }
-
+  
+  /* Null terminate the string */
+  echoInput[i] = '\0';
+ 
   /* Split string from file */
   toSearch = strtok(echoInput," ");
   toEcho = strtok(NULL, " ");  
@@ -55,10 +42,20 @@ int main(void)
   isPresent = strchr(toEcho, *toSearch);
   
   /* Print if isPresent is not NULL | the letter is in the string */
-  if (isPresent != NULL) 
-    {
-    printf("%s\n", toEcho);
+  if (isPresent != NULL)
+    { 
+      /* If isPresent, check 15 chars in toEcho to check toSearch within it */
+      for(k = 0; k <= 15; k++)
+	{
+	  if(toEcho[k] == *toSearch)
+	    inFifteen = IS_IN_FIFTEEN;
+	}
     }
+
+  if(inFifteen == IS_IN_FIFTEEN)
+    printf("%s\n", toEcho);
+
+  free(echoInput);
 
   return 0;
   }
