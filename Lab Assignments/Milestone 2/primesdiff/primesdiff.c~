@@ -54,23 +54,16 @@ int find_pairs(int n, int d)
 	  add++;
 	}
     }
-  /* Iterate through numArray */
-  for( i=0; i<add; i++)
+  /* Iterate through numArray from index 0 */
+  for ( i=0; i<add; i++)
     {
-      /* Checks for the prime pairs with difference in array */
-      if( numArray[i] == numArray[i+1] - d )
+      /* Iterate through numArray from index i */
+      for( j=i; j<add; j++)
 	{
-	  /* Print the primes pairs* */
-	  printf("(%d %d)\n", numArray[i], numArray[i+1]);
+	  /* If the two numbers have the difference d */
+	  if (numArray[i] == numArray[j] - d)
+	    printf("(%d %d)\n", numArray[i], numArray[j]);
 	}
     }
-
-  printf("My Solution\n");
-
-  for ( i=0; i<add; i++)
-      for( j=i; j<add; j++)
-	if (numArray[i] == numArray[j] - d)
-	  printf("(%d %d)\n", numArray[i], numArray[j]);
-
   return 0;
 }

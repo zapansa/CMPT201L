@@ -1,0 +1,28 @@
+Program Description:
+
+- Determines if words are anagrams, permutations of the same letters.
+- Two words separated by a space will be checked 
+- Every pair of words will be checked.
+- Prints the two words then: True if they are anagrams, False if they are not.
+
+------------------------------------------------------------
+
+Tests: 
+
+In testAnagram1, it tests for the examples given on the assignment sheet and yields the correct answer as on the assignment sheet.
+ 
+Tests also included in the file are 
+      - sit its (True)
+      - car rack (False)
+      - par rap (True)
+      - abcdd ddbbb (False)
+All of which are correctly outputted.
+
+
+The testAnagram1 is also a multi-lined file, and the program successfully computes all of the input yielding the correct answer, and printing them properly.
+
+In testInputAnagram2-3, it tests single lined input, and the program computes all of them correctly. 
+
+In makefile, "make testall", runs all of the previous tests and then checks for differences from the files with correct answer (eg. ansAnagram1 and so on). There was no discrepancies with the correct files and the output files. 
+
+In addition to that, "make test", runs the program to test input from the user.

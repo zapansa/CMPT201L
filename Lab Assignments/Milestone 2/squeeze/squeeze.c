@@ -1,6 +1,6 @@
 /*-------------------------------------------------------
 # Student's Name: Patricia Zapansa
-# Lab Assignment #1, Part (#1)
+# Lab Assignment #1, Exercise (#4)
 # Lab Section: 201-X02L
 # Lab Instructor’s Name: Calin Anton
 # CMPUT 201

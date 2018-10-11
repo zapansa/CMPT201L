@@ -1,0 +1,34 @@
+Program Description:
+
+- Takes year as input and prints the day of the Alberts Family day for the
+  next 30 years.
+- In printing the years for the next 30 years, it includes the input year.
+- Displays the years in a nicely organized table. 
+
+------------------------------------------------------------
+
+Tests: 
+
+In testPrintFamDay1, it tests for the example (2013) given on the assignment
+sheet and yields the correct answer as on the assignment sheet.
+ 
+Tests also included in the file are 
+      - if the year is 2014. (Family Day: Feb.17)
+      - if the year is 2015. (Family Day: Feb.16)
+      - if the year is 2016. (Family Day: Feb.15)
+      - if the year is 2017. (Family Day: Feb.20)
+All of which are correctly outputted.
+
+In testPrintFamDay2, some bigger years are used. 
+
+The testPrintFamDay1-2 are also a multi-lined files, and the program
+successfully computes all of the input yielding the correct answer.
+
+In testInputSelectLine3-4, it tests single lined input, and the program
+computes all of them correctly. 
+
+In makefile, "make testall", runs all of the previous tests and then checks
+for differences from the files with correct answer (eg. ansPrintFamDay1 and so
+on). There was no discrepancies with the correct files and the output files. 
+
+In addition to that, "make test", runs the program to test input from the user.

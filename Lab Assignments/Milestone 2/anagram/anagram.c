@@ -1,6 +1,6 @@
 /*-------------------------------------------------------
 # Student's Name: Patricia Zapansa
-# Lab Assignment #1, Part (#3)
+# Lab Assignment #1, Exercise (#3)
 # Lab Section: 201-X02L
 # Lab Instructor’s Name: Calin Anton
 # CMPUT 201
@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 /* Declaring functions */
-int check_anagrams(char[], char[]);
+int check_anagrams(char word1[], char word2[]);
 
 int main(void)
   {

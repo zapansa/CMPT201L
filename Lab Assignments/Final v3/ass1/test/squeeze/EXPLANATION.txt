@@ -1,0 +1,22 @@
+Program Description:
+
+- Reads from standard input
+- compresses the input data and transfers the resultant text to standard output. 
+- The input has sequences of non-numeric characters where the same character is repeated. 
+- These sequences are to be replaced by the character itself followed by a single digit, giving the number of times the character is repeated. If a sequence longer than 9 identical characters is encountered, it is replaced by several sequences with atmost 9 characters.
+
+------------------------------------------------------------
+
+Tests: 
+
+In testSqueeze1, it tests for the examples given on the assignment sheet and yields the correct answer as on the assignment sheet.
+ 
+Similar inputs are also included in the above file.All of which are correctly outputted.
+
+The testSqueeze1 is also a multi-lined file, and the program successfully computes all of the input yielding the correct answer, and printing them properly.
+
+In testInputSqueeze2-3, it tests single lined input, and the program computes all of them correctly. 
+
+In makefile, "make testall", runs all of the previous tests and then checks for differences from the files with correct answer (eg. ansSqueeze1 and so on). There was no discrepancies with the correct files and the output files. 
+
+In addition to that, "make test", runs the program to test input from the user.
