@@ -1,0 +1,104 @@
+Student's Name: Patricia Zapansa
+Assignment #2 Milestone 1
+Lab Section: X02L, Fall 2018
+CMPUT 201, Fall 2018
+Lab Instructor's Name: Calin Anton
+
+- - - - - - - -
+
+Instructions: 
+Milestone 1 - October 26th. Submit on eSubmit a text file containing 
+details of your plan for working on the assignment. This includes 
+dates, algorithms, implementation ideas, and issues you anticipate facing.
+Name the text file A2plan.txt.
+
+- - - - - - - -
+
+Memory Manager Module
+Start: 10-31-18
+Finish: 11-10-18
+Program Names: memManager.h, memManager.c
+
+[ memManager.h ]
+• Contains all the functions needed in memManager.c 
+• Have these functions written to spec. 
+• These will link my module to the test programs
+• ! Can add other modules but it has to run under these conditions !
+
+[ memManager.c ]
+• Contains the implementation of memory manager
+• Must handle ANY amount of entries (as long as memory is available)
+• Circular doubly linked list, so you need a prev and next pointer
+  [[ FUNCTIONS ]]
+  
+  char * myMemory;
+
+  struct memBlock
+  • represent the memory block
+  • NOTE: should myMemory be here?
+	{
+	  size_t size;
+	  // pointer that points to next memory block
+	  struct memBlock *next;
+	  // pointer that points to previous memory block
+	  struct memBlock *prev;
+	};
+
+  struct memBlock *header = NULL;
+
+  void * myMalloc(size_t size)
+  • Allocate requested bytes, size, return pointer to beginning. 
+  • size is int
+  • TODO: use sbrk?
+	{ 
+	  // if the size is 0 or less -> NULL
+	  if (size <= 0 ) 
+	    return NULL; 
+	  allocation fails return null
+	  print a warning message ("Couldn't allocate memory")
+
+	  // otherwise
+	  allocation success return valid pointer
+	}
+	
+  void myFree(void *region)
+  • Checks if a memory block is free or not.
+	{
+	  // If it's NULL return void
+	  if( region == NULL)
+	    return;
+	  
+	  // otherwise
+	  mark as free for reuse later 
+	}
+
+  void outputBins()
+  • print information on unused bins
+  • print on stdout info about each bin
+	  
+  void outputMemory();
+  • print info on used bins
+  • print on stdout info about all blocks of memory/
+
+- - - - - - - -
+
+Main Program
+Start: 10-31-18
+Finish 11-10-18
+Program Names: memMapMgr.c
+
+[ memMapMgr.c ]
+• Create the memory map of a new empty internal memory
+• Import a memory map in the internal memory
+• Export internal memory to an external memory map
+• Allocate memory regions in a memory map - myMalloc()
+• Free memory regions in a memory map - myFree()
+• Print statistics of a memory map - outputBins(), outputMemory()
+• !Does not take standard input, consider using getopt!
+
+TODO: 
+• Research info on memory maps.
+• Make warnings when there is a problem i.e. when memory couldn't
+  Get allocated properly.
+• You're using a doubly-linked type of list so it needs a pointer to 
+  the next and the previous nodes – refresh on doubly linked lists.

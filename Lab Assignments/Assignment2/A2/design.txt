@@ -1,0 +1,320 @@
+*----------------------------------*
+Student's Name: Patricia Zapansa
+Lab Assignment #2
+Lab Section: 201-X02L
+Lab Instructor’s Name: Calin Anton
+Course: CMPUT 201
+Instructor's Name: Calin Anton
+*----------------------------------*
+
+
+*----------------------------------*
+ DESIGN DECISIONS: INTRO 
+*----------------------------------*
+I have separated the major decisions per function under it's own sections.
+Sorry in advance-for the abundance of incoherent thoughts in my explanations 
+and for accidentally writing a bad essay for all my txt files.
+
+*----------------------------------*
+ DESIGN DECISIONS: memManager.c
+*----------------------------------*
+
+I. MyMalloc(size_t size):
+---
+1. General info: 
+With myMalloc, I split it up into many, many, many functions–many functions. In the 
+middle of a 'quick' run of writing myMalloc I was finding increasingly difficult to 
+keep writing the same few lines of code over and over again. It was getting too 
+confusing when debugging so I decided to split it up in (although many) functions. 
+Personally it just helped me a lot. 
+
+Listed are the extra functions I used in myMalloc:
+- memIsEmpty()
+- findBinLine()
+- binIsEmpty()
+- linkBlock()
+- useBlock()
+- binBlock()
+- findBlockLine()
+
+In the very beginning of the function, at first, I had no way to check if the memory 
+was already full or if there was any room left in the memory to allocate whatever 
+size was wanting to be allocated. At first, it just allocated whatever which really
+messed up the memory. I created memIsEmpty() to check if there was any memory left 
+to allocate the amount needed/requested. It checks at every call to myMalloc(). At 
+first I thought it might be a little too much, but I couldn't figure out any other way 
+to check if there was memory left to be allocated aside from checking at every call 
+to myMalloc. 
+
+Most of the other functions I added, I just added for the pure sake of convenience to 
+myself. I felt as if some of the functions are a little redundant and repetitive but 
+'sectioning' off different parts of the code I had to run more than once helped me 
+understand what I was doing and what I wasn't doing a lot clearer. Admittedly, it could 
+be shortened and a lot can be removed, but I just did what worked for me. 
+
+2. Algorithm: 
+First, I check there is valid input for myMalloc. This meaning, input within the scope 
+of the available allocatable memory. I didn't allow anything 0 or below 0 because it 
+wouldn't make sense to allocate nothing. I also didn't allow anything over 65464 because 
+that is the only allocatable memory left, it wouldn't make sense to try to allocate 
+more than that–because you really can't. It returns NULL and an error message if the 
+input is 'invalid'.
+
+After, it aligns to they nearest number divisible by 4. The macro I used for it is 
+directly taken from the tutorial on the the Assignment 2 sheet. Then after, I check if 
+there is enough memory left with the memIsEmpty() function. If there isn't I also return
+NULL and an error message. Nothing is allocated. However, if there is memory, it will 
+continue on. 
+
+It checks what size it is because I have two different methods of allocating it depending
+on if the requested/needed memory belongs to the fixed size bins(<=32) or the variable 
+sized bins(>32). 
+
+If it is in the fixed sized bin and the bin isn't empty, I just take the first block the 
+bin points to. So essentially, the last chunk attached to the bin is the first to be 
+freed. Idid this because it's all the same size. I found no benefit iterating through 
+the blocks and free them like they're in a queue. If the bin is empty however, I traverse 
+through the next biggest chunk able to fit the block of memory. Since the bins are in 
+descending order, the next biggest free chunk the block of memory can fit into, will be 
+the best fit and use up the least of the memory. If it belongs to the variable sized bins 
+and the bin isn't empty, since the blocks in the bin are variable, I traverse through 
+the blocks in the bin until there's one that fits. If the bin is empty, then I traverse 
+through the bins until there is a bin with a block that fits. In both cases, if there 
+less than 8 bytes in the memory at the time of allocating the needed/requested amount, 
+then the rest of the bytes is just added to the allocation. It is like this so there is 
+no issue with memIsEmpty() saying theres memory left even though there might only be 
+4 bytes left, 4 bytes isn't enough to allocate.
+
+3. Issues: 
+- Writing in the size in the first 2 bytes of memory, and doing anything in the first 
+  few bytes of memory. Each byte in the char array is 1 byte. It took a while to figure 
+  out how to write in the "first/last x bytes" of the block of memory. At first I was 
+  using memcpy but quickly I just casted it to be an unsigned short. 
+- The issue with not knowing if there is memory left to be allocated as mentioned in the 
+  intro. The solution is also mentioned in the intro–using my memIsEmpty() at every call 
+  of myMalloc(). 
+- Something unresloved (I think) is the return from myMalloc. The specifications of 
+  myMalloc say that the user data start address is returned. However, if I return the 
+  ACTUAL address I could only myFree() it at that specific run of the program. If I  
+  were to close the program and try freeing it at the previous address I got from 
+  myMalloc, it wouldn't work because the address changes every time. I ended up returning
+  The actual start 'INDEX' (for lack of better term) of the user data in the simulated 
+  myMemory(). EG. User data starting at 'LINE 74', and 74 is what is returned. To do this
+  I had to cast an (void*)(size_t) over an integer. I could have just made the int a size_t
+  But I hadn't initially, and this was just a last ditch effort. By casting it as a size_t
+  the (void*) -> (int) error messages would be silenced. 
+- Many of the issues while writing this function was reassigning the links of the chunks 
+  of memory to the bins. After drawing it out however, most those issues were solved.
+
+     myMemory[4] = 6 *------*------------*------*
+		     |      |    NEXT    |      |
+	 	     *------*------------*------* myMemory[6] = 4
+	 		    |    PREV    | 
+	 	            *------------*
+
+	The next and the previous of the bin would point at each other. This still 
+	references the 4 bytes of the bin aka just the bin. Since an empty bin
+	just references itself. :^)
+
+
+A BIN WITH 1 CHUNK
+
+	 *--------------*------------* myMemory[4] = #+4
+	 |		|    NEXT    |
+	 |		|------------*---------------* myMemory[6] = #+2
+	 |		|    PREV    |               |
+	 |		*------------*               |
+	 |					     |
+	 |					     |
+	 |	*-----------------------------*      |
+	 |	|            size             |      |
+	 |      |-----------------------------*------* myMemory[#+2] = 6
+	 |	|            NEXT             |
+	 *------*-----------------------------| myMemory[#+4] = 4
+		|            PREV             |
+		|-----------------------------| 
+	        |                             |
+                |                             |
+		|-----------------------------| Since the bins are 4 bytes, I split up that 
+		|            size             | 4 bytes. First 2 bytes is the previous, the 
+		*-----------------------------* last 2 bytes is the next. 
+
+	I made something that resembled a circular doubly linked list by storing the values 
+	in specific indexes of myMemory char array. I could access the blocks easily this way. 
+	Values stored are all unsigned shorts. Stores the first byte of the unsigned short in 
+	myMemory[4] and the second, myMemory[5]. 
+
+	*NOTE: Values dereferenced with *((unsigned short*)(&myMemory[<INDEX>]))
+
+
+A BIN WITH MORE THAN ONE CHUNK
+
+		                *------------*---------------* myMemory[4] = #+4
+		 		|    NEXT    |               |
+		 *--------------*------------|               | myMemory[6] = ##+2
+		 |		|    PREV    |               |
+		 |		*------------*               |
+		 |					     |
+		 |					     |
+		 |    # *-----------------------------*      |
+		 |	|            size             |      |
+		 |  #+2 |-----------------------------*---*  | myMemory[#+2] = ##+4  
+	 	 |	|            NEXT             |   |  |
+	 	 |  #+4 |-----------------------------*---|--* myMemory[#+4] = 4
+	 	 |	|            PREV             |	  |  
+		 |	|-----------------------------|   |
+		 |      |                             |   |
+        	 |      |                             |   |
+		 |	|-----------------------------|   |
+		 |	|            size             |   |
+		 |	*-----------------------------*   |
+		 |		                          |
+		 |					  |  
+		 |   ## *-----------------------------*   |
+ 		 |	|            size             |   |
+	    ##+2 *------*-----------------------------|   | myMemory[##+2] = 6
+         	 	|            NEXT             |   |
+ 	           ##+4 |-----------------------------*---* myMemory[##+4] = #+2
+			|            PREV             | 
+			|-----------------------------| 
+		        |                             |
+     	                |                             |
+			|-----------------------------|  
+			|            size             |
+			*-----------------------------*
+
+	The next of the last chunk will 'point' (store the value) to the bin. I think
+	this is the best I can think of. I'm not sure any other way to do this without
+	having to keep track of a lot of forgettable different numbers. Sorry :( 
+
+	Freeing/Allocating is just a matter of changing the 'links'.
+
+II. myFree(void *region)
+---
+1. General Info: 
+I used some functions in myFree() that I used in myMalloc(). Particularly binBlock(), 
+although the name suggests something else, it just re-links a block into a new bin. I 
+used it myFree because, in the function, a previously allocates chunk has to be 'freed' 
+and re-linked into the appropriate bin. 
+
+Listed are the functions used in myFree():
+- freeBlock()
+- binBlock()
+- findBinLine()
+
+2. Algorithm: 
+
+What is passed into the function is an int that is also casted with a (void*)(size_t)
+to be able to be passed into the function. In myFree() that number is taken and 
+2 is subtracted from it. The new number taken from it is the starting line of the 
+potential block of memory to be freed. It also holds the size value of that chunk.
+From the starting line of the potential free'd block, two bytes above it will tell the 
+size of the chunk above, and potential free'd block + the size of the block will get 
+you to the size of the block below it. I check if those blocks above/below are free 
+And merge them if they are. When merged, the new merged block of memory is sent to the 
+Appropriate sized bin (if necessary). 
+
+3. Issues: 
+- Allocating blocks that start at 72 and blocks that end at 65356. An issue I was met 
+  with is that, since I check the block sizes above and below the 'to be' freed block
+  it checks OVER the scope of the allocatable memory if the block is in the beginning 
+  or the end. I fixed it by: if the start/end of the line of the block above/below 
+  is 72/65356. Just don't check for the block above/below the 'to be' allocated block. 
+- I couldn't really figure out how to to free the block from just using the actual address
+  originally returned from my first iteration of myMalloc since the address changes
+  every time the program opened, closed, and reopened. I "solved" it by actually 
+  returning the the 'LINE' or 'INDEX' the user data started on in the myMemory char*
+  array in myMalloc(). I used that value, passed into myFree to find that same block
+  allocated in myMalloc() when using myFree(). Although, this wasn't the exact 
+  specifications, it made the most sense to me, and the only thing I could get working. 
+
+III. outputMemory()
+---
+1. General info: N/A
+
+2. Algorithm: 
+This function prints the memory by using a for loop to traverse through the blocks.
+It starts at line 72, finds the size of that block, checks if its free or not, then
+adds its size to the line as to find the starting line of the next block to also find 
+all of it's info. This happens until the line is at the end of memory (line 65356). 
+
+3. Issues: 
+- The only issue I had with this was figuring out how to traverse through every block
+  of memory. The only solution I had come up with was what I wrote for the algorithm
+  section. Basically adding to the 'index' until I hit 65356.
+
+IV. outputBins()
+---
+1. General info:
+
+Listed are the functions used in outputBins():
+- findBinSize()
+- binIsEmpty()
+
+2. Algorithm: 
+For loop to loop though all the bins (0-68). Since it only prints non-empty bins, 
+I use the binIsEmpty() function to check if the bin is empty. If the bin's first chunk 
+of memory points back to the bin then theres only one chunk in the bin. If the bins
+first chunk doesn't point back to the bin then theres more than one chunk in the bin. 
+The way I traversed through the chunks in the bin was keeping track of the 'start' of
+a chunk and where it points to next. I enclosed that in a while loop that will keep 
+going until it finds a chunk that has a 'next' pointing back to the bin. 
+
+3. Issues: 
+- Traversing through the chunks in the memory. The solution to which I used, I explained
+  in the algorithm section of this function. 
+
+*----------------------------------*
+ DESIGN DECISIONS: memMapMgr.c
+*----------------------------------*
+
+I. main(int argh, char **argv):
+---
+1. General info: 
+This uses getopt and not standard input. All the other functions used in this function 
+are the following: 
+- initializeMem()
+- emptFle()
+- impFile()
+- expFile()
+- myMalloc()
+- myFree()
+- checkFree()
+
+2. Algorithm: 
+The algorithm for this is pretty self explanatory (I think) just by looking at the code. 
+I have a getopt while loop to get command line input and a switch statement for the 
+different options it takes. All of the options separated with a colon because an argument
+is needed per option. Instead of using argv[0], argv[2]... so on, I used optarg as it is 
+just a lot more convenient. Each case in the switch statement has an if/else for error 
+checking. It displays an error message if something went wrong. 
+
+3. Issues:
+- Unresolved: I made the assumption that the user knows that '-a <filename>' comes 
+  before '-b <size>'. If used the other way around it wouldn't work. I have no way of 
+  even printing out an error saying that it doesn't work. 
+- The only other issue I had with main() was fread/write on the functions inside
+  of it. It was resolved after doing a (decent amount of) google search(es). 
+
+*----------------------------------*
+ OTHER ISSUES
+*----------------------------------*
+- if/else if/else abuse. I don't really know if this is okay, 90% of my code are ifs. 
+  There is probably a better way at going about it but this is the only solution that 
+  I could somewhat follow. 
+- Writing to the char *myMemory. At first I was using memcpy but it just looked really
+  weird. Stack Overflow told me to access and write to it using 
+  *((unsigned short*)(&myMemory[index])) to copy bytes starting that the index. If it 
+  is casted as an unsigned short, since char *myMemory is 1 byte per it's index 
+  (EG. myMemory[0]...myMemory[100] are 1 byte each), supposedly, since an unsigned int
+  Is two bytes. It would copy the 2 bytes needed to store it in the first two bytes 
+  of myMemory starting at its index. 
+  Example: 
+	*((unsigned short*)(&myMemory[68])) = a number
+
+	myMemory[68] = contains the first one byte of the unsigned short.
+	myMemory[69] = contains the last one byte of the unsigned short. 
+
+	Dereferencing it with *((unsigned short*)(&myMemory[68])) reads the 2 bytes
+ 	from the given address. (SUPPOSEDLY. It works so I'm not going to question 
+	it too much). 

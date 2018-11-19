@@ -1,0 +1,15 @@
+Error! That filename does not exist.
+No memory could be allocated. Memory is empty.
+Error! That filename does not exist.
+Error! '-a' needs to be followed by a '-b'
+
+MEMORY STATISTICS
++---------+-------+------------+-------+
+|IN USE   |72     |65465       |65536  |
+|         |       |            |       |
+
+BIN STATISTICS
+Error! Unable to print map statistics file may not exist.
+Error! That address cannot be freed.
+Error! '-f' needs to be followed by a '-p'
+Error! '-f' needs to be followed by a '-p'
