@@ -1,0 +1,20 @@
+Error! '-a' needs to be followed by a '-b'
+Error! That filename does not exist.
+Error! Unable to print map statistics file may not exist.
+Error! '-a' needs to be followed by a '-b'
+Error! '-f' needs to be followed by a '-p'
+Error! That filename does not exist.
+Error! That filename does not exit.
+
+MEMORY STATISTICS
++---------+-------+------------+-------+
+|IN USE   |72     |705         |776    |
+|         |       |            |       |
++---------+-------+------------+-------+
+|FREE     |776    |64760       |65536  |
+|         |       |            |       |
+
+BIN STATISTICS
++----------+------------+----------+
+|65536     |1           |64760     |
+|          |            |          |

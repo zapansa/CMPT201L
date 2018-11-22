@@ -1,0 +1,150 @@
+*----------------------------------*
+Student's Name: Patricia Zapansa
+Lab Assignment #2
+Lab Section: 201-X02L
+Lab Instructor’s Name: Calin Anton
+Course: CMPUT 201
+Instructor's Name: Calin Anton
+*----------------------------------*
+
+*----------------------------------*
+ TESTING
+*----------------------------------*
+  I used exe files and makefile for my 'testing'. The exe is really just
+  hardcoded things to make sure I was getting the correct results for the
+  functions in memManager.c. :)
+
+  The makefile tests are there to test if everything is still running
+  the way I wanted to. After getting the program working properly I
+  made those tests so for any change I make afterwards I can quickly check
+  if I severely messed something up. Also! To just generally check if
+  the command line stuff is working properly!
+
+  In makefile:
+    'make test(1-6)' will run individual tests.
+    'make testAll' will run all of the make tests and compile memTest1/2
+    'make checkTest' will compare the correct results of testALL with the
+     output that was received from it.
+
+  As well as the testing files, I included the other files memMapMgr,
+  memManager.h, and memManager.c in the test directory. They are exactly
+  the same as the ones in A2. They are here to test the files in this 'Test'
+  folder.
+
+*----------------------------------*
+ TESTING: Files
+*----------------------------------*
+memTest1:
+------
+    memTest1 is an executable that I used to check if functions in the memManager
+    are working properly. The result of running the program is that the
+    different cases of allocating and freeing statistics are printed.
+    'make memTest1' creates the executable, it is not included in 'make all'.
+
+    FROM README:
+    The purpose of this file is to check myMalloc and myFree. To see if they
+    are giving the correct results. Compile and run, and it just prints the
+    results of various tests.
+
+    The tests are as follows:
+    - test1(): This is my initial test, I just put in a bunch of random numbers
+      to check if it even compiles.
+    - test2(): This test, I made it so, when I free'd a chunk it would go into
+      that bin. Each free'd chunk is separated by another chunk to prevent
+      merging in this test. I am testing to see if the linking in the bins is
+      working properly.
+    - test3(): In this, I am checking to see if the merging will work properly.
+      If successful, it should merge into one big block and be put into that
+      specific sized bin. The original size'd bin should be empty and not printed.
+    - test4(): In this I am checking to see if the initial memory is put inside
+      the correct bin.
+    - test5(): I am again checking to see if chunks will link to the bin. But this
+      time, I'm checking if it will happen twice and to a bigger number too (>32)
+
+    NOTE: Compiled with memManager.c and memManager.h. It create an executable
+    called 'memTest1'
+
+memTest2:
+------
+    memTest2 is an executable similar to memTest1 but all it is really for is so
+    I can check if the chunks of memory are being linked to the bin in
+    increasing order. The bins and the chunks in the bin are printed when it is
+    run. 'make memTest2' creates the excecutable, it is also not included in 'make all'.
+
+    FROM README:
+    This program looks at the inside of the bins and lists the chunks from beginning
+    of the list to the end. Its use is so that I can check if the blocks are in
+    increasing order. It contains a function that is derived from the original
+    outputBins(). How it works is that it just, One–outputs the bins normally, two–
+    prints the non-empty bins size, traverses through the bins, and prints the first
+    and the last size of the chunk in the bin.
+
+    There is 3 tests I did, they are:
+    - test1(): variable sizes that are >124 but <= 256 are malloc'd, with another
+      different sized malloc'd chunk separating them. The variable sizes malloc'd
+      earlier are free'd. I am checking to see if the variable sized malloc'd chunks
+      all go into the bin in increasing order.
+    - test2(): testing to see if even after merging, the new merged chunks would still
+      go into the appropriate sized bin in increasing order.
+    - test3(): same as test1(), however with fixed sizes. They are all the same size
+      just testing to see if it would list all the blocks.
+
+    NOTE: Compiled with memManager.c and memManager.h. It create an executable
+    called 'memTest2'.
+
+
+test1:
+------
+    test1 is a binary file of 'empty' memory. Created by "./memMapMgr -c test1".
+    If printed it should give the same results as the test1Correct file.
+    The results are written to outputTest1 and compared with correctTest1
+    in 'make testCheck'.
+
+    If the test is successful, there should be one block free of memory that is
+    65464 bytes and in the bins, only one bin size 65536 containing 1 chunk
+    of 65464 bytes.
+
+test2:
+------
+    test2 is a binary file, created by the '-c' option then allocated x times
+    with various values until there is no memory left. And then the results are
+    printed, should give the same results as correctTest2. The results are written to
+    outputTest2 and compared with correctTest2 in 'make testCheck'.
+
+    The outputBins function should not print anything because there is no empty
+    bins. The output
+
+test3:
+------
+    test3 like others is a binary file. In this test, checking to see if merging
+    works and gets put into the correct bin. The results are written to
+    outputTest3 and compared with correctTest3 in 'make testCheck'.
+
+test4:
+------
+    this test is to make sure that if the memory is full no more it nothing else
+    can be allocated and an error message is shown test4 file contains a fully
+    allocated myMemory. The error messages are concatenated in a file outputTest4.
+    The results are written to outputTest4 and compared with correctTest4
+    in 'make testCheck'.
+
+test5:
+------
+    the purpose of this is to check for valid input of random things that are
+    (mostly) wrong from the command line. The error messages are concatenated
+    into the file outputTest5 and then compared with a file that contains the
+    what should have happened called correctTest5. The results are written to
+    outputTest5 and compared with correctTest5 in 'make testCheck'.
+
+test6:
+------
+    the purpose of this test is MORE error checking but more specific than
+    test5, in this. I'm actually trying to cause errors to get specific
+    error outputs. The errors will be concatenated on a file called outputTest6
+    and compared with a file called correctTest6 containing the correct values.
+
+test7:
+------
+    Creates the exe files memTest1 and memTest2 together, runs it and puts
+    output in the file outputMemTest1 and outputMemTest2. It is included in
+    'make testCheck'. The output of each is compared with a correct version.
