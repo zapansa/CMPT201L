@@ -1,5 +1,5 @@
 /*-------------------------------------------------------
-# Student's Name: Patricia Zapansa, Alyssa Norton
+# Student's Name: Patricia Zapansa
 # Lab Assignment #3
 # Lab Section: 201-X02L
 # Lab Instructor’s Name: Calin Anton
@@ -60,13 +60,13 @@ void peepShowPositions(char *peep)
   }
 }
 
-unsigned int editor(char *peep, struct transaction *modBuffer)
+unsigned int editor(char *peep, Transaction *modBuffer)
 {
   /* Declare variables */
-  int choice, transactionsAmt = 0;
+  int choice, exhChoice, transactionsAmt = 0;
   int choiceErr = FALSE;
 
-  while(transactionsAmt!=MXTXNUM)
+  while(transactionsAmt != MXTXNUM)
   {
     /* get the choice of how to edit the peep */
     choice = peepMenu();
@@ -95,6 +95,23 @@ unsigned int editor(char *peep, struct transaction *modBuffer)
     /* picked an option increase transation */
     if(choiceErr == TRUE)
       transactionsAmt++;
+  }
+  if(transactionsAmt == MXTXNUM)
+  {
+    /* get input here */
+    exhChoice = peepExhausted();
+    switch(exhChoice)
+    {
+      case 'y':
+        /* save the file */
+        /* reopen the file */
+        return transactionsAmt;
+        break;
+      case 'n':
+        /* return transactions to save and exit */
+        return transactionsAmt;
+        break;
+    }
   }
   /* Return the amount/number of transactions in the buffer */
   return transactionsAmt;
@@ -127,7 +144,20 @@ int peepMenu()
   return choice;
 }
 
-int peepDelete(char *peep, struct transaction *modBuffer)
+char peepExhausted()
+{
+  /* declare variables */
+  char choice;
+
+  /* message & input */
+  printf("You've exhausted the amount of transactions in this block!\n");
+  printf("Continue adding more changes?\n\n");
+  printf("Enter (y) to add more or (n) to save and exit.\n");
+  printf("Input: ");
+  scanf("%c", &choice);
+  return choice;
+}
+int peepDelete(char *peep, Transaction *modBuffer)
 {
   /* variables */
   int position;
@@ -182,7 +212,7 @@ int peepDelete(char *peep, struct transaction *modBuffer)
   return TRUE;
 }
 
-void pDelete(char *peep, struct transaction *modBuffer, int position)
+void pDelete(char *peep, Transaction *modBuffer, int position)
 {
   /* when deleting from a string, the string shifts back */
   if(peep[position+1] == '\0')
@@ -223,7 +253,7 @@ void pDelete(char *peep, struct transaction *modBuffer, int position)
 
 }
 
-int peepInsert(char *peep, struct transaction *modBuffer)
+int peepInsert(char *peep, Transaction *modBuffer)
 {
   /* variables */
   unsigned char charIn = ' ';
@@ -316,7 +346,7 @@ int peepInsert(char *peep, struct transaction *modBuffer)
   return TRUE;
 }
 
-void pInsert(char *peep, struct transaction *modBuffer, int position, char charIn)
+void pInsert(char *peep, Transaction *modBuffer, int position, char charIn)
 {
   /* enter it at a position and shift the rest right */
   /* nothing gets deleted or replaced */

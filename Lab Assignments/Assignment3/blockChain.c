@@ -11,12 +11,12 @@
 *------------------------------------------------------*/
 
 /* TO DO:
-  [ ] blockSize vs blockSize
+  [x] blockSize vs blockSize
   [x] blockNum
   [x] is the timestamp for the block different than the transaction?
   [ ] range checking
   [-] make Transaction trns dynamic
-  [ ] hashing
+  [x] hashing
 */
 
 /* libraries to include */
@@ -30,7 +30,7 @@ int main(int argc, char **argv)
   int option;
   int optFlag = FALSE, errFlag = FALSE;
   char *filename = NULL;
-  TREE *top = NULL; 
+  TREE *top = NULL;
 
   /* peep stuff */
   char *peep = malloc((PEEPLEN+1)*sizeof(char));
@@ -65,18 +65,29 @@ int main(int argc, char **argv)
         /* create a new peep loop sessions */
         trnsAmt = editor(peep, modBuffer);
 
-        /* add the transactions to the blkBuffer */
-        addTransactions(trnsAmt, blkAmt, modBuffer, &blkBuffer[0]);
-	
-	/* get the merkle root of the transactions */
-        top = getRoot(top, modBuffer, trnsAmt);
+        /* if there was transactions made on the buffer */
+        if(trnsAmt != 0)
+        {
+          /* add the transactions to the blkBuffer */
+          addTransactions(trnsAmt, blkAmt, modBuffer, &blkBuffer[blkAmt]);
 
-        /* add the merkle root to the block */ 
-	addRoot(top, &blkBuffer[0]);
+          /* get the merkle root for the transactions */
+          top = getRoot(top, modBuffer, trnsAmt);
 
-        /* save the new peep to file */
-        writeBlockChain(peep, blkBuffer, errFlag, filename);
+          /* add the root to the block */
+          addRoot(top, &blkBuffer[blkAmt]);
 
+          /* add the previous hash */
+          addPreviousHash(&blkBuffer[blkAmt], &blkBuffer[blkAmt]);
+
+          /* hash the block! */
+          addBlockHash(&blkBuffer[blkAmt]);
+
+          /* export peep to file */
+          writeBlockChain(peep, blkBuffer, errFlag, filename);
+        }
+        else /* there was no transaction on the block */
+          errNoTransactions();
         break;
       case 'e':
         /* exit the program at next option if any */
@@ -102,11 +113,29 @@ int main(int argc, char **argv)
           /* call editor to edit the peep */
           trnsAmt = editor(peep, modBuffer);
 
-          /* add the transactions to the blkBuffer */
-          addTransactions(trnsAmt, blkAmt, modBuffer, &blkBuffer[blkAmt]);
+          /* if there was transactions made on the buffer */
+          if(trnsAmt != 0)
+          {
+            /* add the transactions to the blkBuffer */
+            addTransactions(trnsAmt, blkAmt, modBuffer, &blkBuffer[blkAmt]);
 
-          /* export peep to file */
-          writeBlockChain(peep, blkBuffer, errFlag, filename);
+            /* get the merkle root for the transactions */
+            top = getRoot(top, modBuffer, trnsAmt);
+
+            /* add the root to the block */
+            addRoot(top, &blkBuffer[blkAmt]);
+
+	    /* add the previous hash */
+            addPreviousHash(&blkBuffer[blkAmt], &blkBuffer[blkAmt-1]);
+
+            /* hash the block! */
+            addBlockHash(&blkBuffer[blkAmt]);
+
+            /* export peep to file */
+            writeBlockChain(peep, blkBuffer, errFlag, filename);
+          }
+          else /* there was no transaction on the block */
+            errNoTransactions();
         }
         else /* doesn't exist - show error */
           errReadWrite(filename);
@@ -114,17 +143,21 @@ int main(int argc, char **argv)
        case 'v':
          /* exit the program at next option if any */
          optFlag = TRUE;
-      
+
          /* get the name of the file */
          filename = optarg;
-      
+
          /* read from the file */
          errFlag = readBlockChain(peep, &blkBuffer, filename);
-      
+
          /* checking for errors */
          if(errFlag != FALSE) /* file exists */
          {
-           getRoot(top, blkBuffer[0].trns, 1);
+           /* returns the amount of blocks via math lol */
+           blkAmt = getBlockAmt(errFlag);
+
+           /* function - verify the blockchain */
+           verifyBlockChain(blkAmt, blkBuffer);
          }
          else /* doesn't exist - show error */
            errReadWrite(filename);
@@ -199,7 +232,7 @@ int main(int argc, char **argv)
   return 0;
 }
 
-int newBlockChain(char peep[], struct block **blkBuffer, char *filename)
+int newBlockChain(char peep[], Block **blkBuffer, char *filename)
 {
   /* file variable */
   FILE *imFile;
@@ -229,7 +262,7 @@ int newBlockChain(char peep[], struct block **blkBuffer, char *filename)
   return (sizeof(Block));
 }
 
-int readBlockChain(char peep[], struct block **blkBuffer, char *filename)
+int readBlockChain(char peep[], Block **blkBuffer, char *filename)
 {
   /* file variable */
   FILE *imFile;
@@ -255,10 +288,10 @@ int readBlockChain(char peep[], struct block **blkBuffer, char *filename)
     /* but also give enough room for a block after the old one in the file */
     *blkBuffer = malloc(mallocSz);
 
-    /* reads in the contents of the file into the pointers peep & modBuffer */
+    /* reads in the contents of the file into blkBuffer */
     fread(*blkBuffer, sizeof(Block), freadSz, imFile);
 
-    /* remember to close the file ! :) */
+    /* :) close the file :) */
     fclose(imFile);
   }
   else /* file didn't exist */
@@ -268,21 +301,22 @@ int readBlockChain(char peep[], struct block **blkBuffer, char *filename)
   return (mallocSz);
 }
 
-int writeBlockChain(char peep[], struct block *blkBuffer, int blockSz, char *filename)
+int writeBlockChain(char peep[], Block *blkBuffer, int blockSz, char *filename)
 {
   /* file variable here */
   FILE *exFile;
   int fwriteSz = blockSz/sizeof(Block);
 
-  /* open file for writing - textfile*/
+  /* open file for writing*/
   exFile = fopen(filename, "wb");
 
   /* file exists */
   if(exFile)
   {
-    /* writes whatever is in the peep & modBuffer pointers into the file */
+    /* writes into blkBuffer */
     fwrite(blkBuffer, fwriteSz, sizeof(Block), exFile);
 
+    /* close the file */
     fclose(exFile);
   }
   else /* doesn't exist */
@@ -292,9 +326,45 @@ int writeBlockChain(char peep[], struct block *blkBuffer, int blockSz, char *fil
   return TRUE;
 }
 
+void addBlockHash(Block *blkBuffer)
+{
+  /* store the hash */
+  unsigned char hashTemp[HASHSZ];
+
+  /* time at which block was hashed */
+  blkBuffer->timestamp = getTimestamp();
+
+  /* hash the block */
+  hashBlockHeader(blkBuffer, hashTemp);
+
+  /* use only the last 7 bytes copy hash to head hash */
+  memcpy(blkBuffer->headHash, hashTemp+(HASHSZ-7), 7);
+}
+
+void addPreviousHash(Block *currBlockBuffer, Block *prevBlockBuffer)
+{
+  if(currBlockBuffer->blockNum == 1)
+  {
+    /* it is the first block set to 0 */
+    currBlockBuffer->previousHash[0] = '0';
+  }
+  else
+  {
+    /* it is not the first block, so copy hash of old block */
+    memcpy(currBlockBuffer->previousHash, &prevBlockBuffer->headHash, 7);
+  }
+}
+
 void errReadWrite(char *filename)
 {
   printf("Error! Unable to open file [%s], it may not exist.\n", filename);
+}
+
+void errNoTransactions()
+{
+  printf("There was no transactions made! Block will not be added.\n");
+  printf("Exiting...\n");
+  exit(0);
 }
 
 void addTransactions(int tNum, int blkAmt, Transaction *modBuffer, Block *blkBuffer)
@@ -305,8 +375,6 @@ void addTransactions(int tNum, int blkAmt, Transaction *modBuffer, Block *blkBuf
   /* just set the stuff for the block so far */
   blkBuffer->blockNum = blkAmt+1;
   blkBuffer->blockSize = tNum;
-  blkBuffer->timestamp = getTimestamp();
-  // blkBuffer->blockSize = sizeof(Transaction)*bNum;
 
   /* add the values in to the block struct at index */
   for(i = 0; i < tNum; i++)
@@ -318,25 +386,63 @@ void addTransactions(int tNum, int blkAmt, Transaction *modBuffer, Block *blkBuf
   }
 }
 
-void printTransactions(int blkAmt, struct block *blkBuffer)
+void printTransactions(int blkAmt, Block *blkBuffer)
 {
   /* variables */
   int i, j, k, trnsAmt;
+
+  peepMenuBorder();
+
   for(i = 0; i < blkAmt; i++)
   {
     trnsAmt = blkBuffer[i].blockSize;
-    printf("\n%10d BLOCK %d has %d transactions\n", (int)blkBuffer[i].timestamp, blkBuffer[i].blockNum, trnsAmt);
-    printf("  MERKLE ROOT: ");
+
+    printf("BLOCK #%d\n", blkBuffer[i].blockNum);
+    peepMenuBorder();
+
+    /* print transaction size */
+    printf("Transaction Size: %d\n", trnsAmt);
+
+    /* print the block timestamp */
+    printf("Block Timestamp: %d\n", (int)blkBuffer[i].timestamp);
+
+    printf("Previous Hash: ");
+    if(i == 0) /* previous hash for first block is 0 not a hexadec.*/
+    {
+      /* not a hexadecimal */
+      printf("%c\n", blkBuffer[i].previousHash[0]);
+    }
+    else
+    {
+      /* print block hash */
+      for(k = 0; k < 7; k++)
+        printf("%02x", blkBuffer[i].previousHash[k]);
+      printf("\n");
+    }
+
+    /* print block hash 7 bytes */
+    printf("Block Hash: ");
     for(k = 0; k < 7; k++)
       printf("%02x", blkBuffer[i].blockHash[k]);
     printf("\n");
+
+    /* print block hash */
+    printf("Head Hash: ");
+    for(k = 0; k < 7; k++)
+      printf("%02x", blkBuffer[i].headHash[k]);
+    printf("\n-\n");
+
+    /* printing transaction info */
+    printf("Transaction History:\n");
     for(j = 0; j < trnsAmt; j++)
     {
-      printf("%10d ", (int)blkBuffer[i].trns[j].timestamp);
+      printf("%-10d ", (int)blkBuffer[i].trns[j].timestamp);
       printf("%5d ", blkBuffer[i].trns[j].mod.position);
       printf("%5c ", blkBuffer[i].trns[j].mod.character);
       printf("%5d \n", blkBuffer[i].trns[j].mod.event_type);
     }
+   printf("\n");
+   peepMenuBorder();
   }
 }
 
@@ -345,7 +451,7 @@ int getBlockAmt(int blkBufferByteSz)
   return ((blkBufferByteSz/(sizeof(Block)))-1);
 }
 
-void getPeepAtTime(int blkAmt, int tmStamp, char *peep, struct transaction *modBuffer, struct block *blkBuffer)
+void getPeepAtTime(int blkAmt, int tmStamp, char *peep, Transaction *modBuffer, Block *blkBuffer)
 {
   /* variables */
   int i, j, trnsAmt, fullBlock = FALSE;
@@ -461,7 +567,7 @@ void getPeepAtTime(int blkAmt, int tmStamp, char *peep, struct transaction *modB
   peepShowPositions(peep);
 }
 
-void getPeep(int blkAmt, char *peep, struct transaction *modBuffer, struct block *blkBuffer)
+void getPeep(int blkAmt, char *peep, Transaction *modBuffer, Block *blkBuffer)
 {
   /* variables */
   int i, j, trnsAmt;
@@ -496,6 +602,56 @@ void getPeep(int blkAmt, char *peep, struct transaction *modBuffer, struct block
         /* this just DISPLAYS the current peep and doesn't add to the block chain */
         pDelete(peep, modBuffer, replayPos);
       }
+    }
+  }
+}
+
+void verifyBlockChain(int blkAmt, Block *blkBuffer)
+{
+  /* replay all the hashes on the block */
+  /* store temp hash */
+  unsigned char hashTemp[HASHSZ];
+  unsigned char hashCmp[7];
+  int i, j, compare;
+
+  /* search though the blocks */
+  for(i = 0; i < blkAmt; i++)
+  {
+    /* get the hash of the block store in temp */
+    hashBlockHeader(&blkBuffer[i], hashTemp);
+
+    printf("TEMP: ");
+    for(j = 0; j < 7; j++)
+      printf("%02x", hashTemp[j]);
+    printf("\n");
+
+    /* get the last 7 bytes of new hash store in hashCmp */
+    memcpy(hashCmp, hashTemp+(HASHSZ-7), 7);
+    /* compare the hashcmp to the hash stored in the block */
+    compare = memcmp(hashCmp, &blkBuffer[i].headHash,7);
+
+    /* print block hash */
+    printf("NEW: ");
+    for(j = 0; j < 7; j++)
+      printf("%02x", hashCmp[j]);
+    printf("\n");
+
+    /* print block hash */
+    printf("OLD: ");
+    for(j = 0; j < 7; j++)
+      printf("%02x", blkBuffer[i].headHash[j]);
+    printf("\n");
+
+    /* if they do not match it is not valid blockchain */
+    if(compare != 0)
+    {
+      /* notify */
+      printf("Block #%d hashes do not match!\n", blkBuffer[i].blockNum);
+    }
+    else
+    {
+      /* they match */
+      printf("Block #%d is verified.\n", blkBuffer[i].blockNum);
     }
   }
 }
