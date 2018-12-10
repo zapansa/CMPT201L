@@ -45,7 +45,7 @@ typedef struct modification
 	 timestamp	- Time that the event occurred (EPOCH time since January 1-st 2018). [6 bytes]
 	 modification	- The modification part of the transaction. [2 bytes]
 */
-typedef Transaction
+typedef struct transaction
 {
   unsigned long timestamp: 48; /* ????????????? */
   Modification mod; /* should already give two bytes */
@@ -63,7 +63,7 @@ NOTE: a hash of length 7 bytes is obtained by taking the last 7 bytes of the sha
       The truncation is to be applied only as the final step.
       All intermediary hashes are full sha256 hashes
 */
-typedef Block
+typedef struct block
 {
   unsigned char previousHash[7]; /* head */
   unsigned long timestamp: 48; /* head */

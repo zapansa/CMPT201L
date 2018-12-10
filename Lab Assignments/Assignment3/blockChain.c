@@ -30,7 +30,7 @@ int main(int argc, char **argv)
   int option;
   int optFlag = FALSE, errFlag = FALSE;
   char *filename = NULL;
-  TREE *top = NULL;
+  LEAF *top = NULL;
 
   /* peep stuff */
   char *peep = malloc((PEEPLEN+1)*sizeof(char));
